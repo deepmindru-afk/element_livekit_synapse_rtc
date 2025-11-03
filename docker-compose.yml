@@ -1,0 +1,129 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: matrix-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8448:8448"  # ← federation
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    restart: unless-stopped
+    networks:
+      - matrix-net
+
+#  certbot:
+#    image: certbot/certbot:latest
+#    volumes:
+#      - ./certbot/conf:/etc/letsencrypt
+#      - ./certbot/www:/var/www/certbot
+#    networks:
+#      - matrix-net
+
+  synapse:
+    image: matrixdotorg/synapse:latest
+    container_name: matrix-synapse
+    restart: unless-stopped
+    environment:
+      - SYNAPSE_SERVER_NAME=mydomain.com
+      - SYNAPSE_REPORT_STATS=no
+    volumes:
+      - ./synapse-data:/data
+    expose:
+      - "8008"
+      - "8448"
+    networks:
+      - matrix-net
+    depends_on:
+      - postgres
+    entrypoint: ["sh", "-c", "if [ ! -f /data/homeserver.yaml ]; then /start.py generate; fi; exec /start.py"]
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: matrix-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=synapse
+      - POSTGRES_USER=synapse
+      - POSTGRES_PASSWORD=synapse_password
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - matrix-net
+
+  element:
+    image: vectorim/element-web:latest
+    container_name: matrix-element
+    restart: unless-stopped
+    volumes:
+      - ./element/config.json:/app/config.json
+    expose:
+      - "80"
+    networks:
+      - matrix-net
+    depends_on:
+      - synapse
+
+  lk-jwt-service:
+    image: ghcr.io/element-hq/lk-jwt-service:latest
+    restart: unless-stopped
+    container_name: matrix-jwt-service
+    expose:
+      - "8080"
+    environment:
+      # Port the JWT service listens on internally
+      - LK_JWT_PORT=8080
+      - LIVEKIT_URL=wss://mydomain.com/livekit/sfu
+      - LIVEKIT_KEY=111ea560574baaabbbccc9cf2f4d3111
+      - LIVEKIT_SECRET=11122233359c0d83f836055e267255674e39f9237dd22fcc5ed444f333222111
+      - LIVEKIT_FULL_ACCESS_HOMESERVERS=mydomain.com # server name
+    networks:
+      - matrix-net
+
+  livekit:
+    image: livekit/livekit-server:latest
+    container_name: matrix-livekit
+    restart: unless-stopped
+    command: --config /etc/livekit.yaml
+    volumes:
+      - ./livekit/livekit.yaml:/etc/livekit.yaml
+      - ./certbot/conf:/etc/letsencrypt
+    expose:
+      - "7880"
+      - "7881"
+      - "7882"
+    ports:
+      - "7880:7880/tcp"                 # HTTP/WSS signaling
+      - "7880:7880/udp"                 # ← ДОБАВИТЬ UDP для RTP
+      - "7881:7881/tcp"                 # ICE-TCP fallback
+      - "7881:7881/udp"                 # ← ДОБАВИТЬ UDP
+      - "50000-50020:50000-50020/udp"  # ← 100 портов вместо 101
+    networks:
+      - matrix-net
+
+  coturn:
+    image: coturn/coturn:latest
+    container_name: matrix-coturn
+    restart: unless-stopped
+    ports:
+      - "3478:3478/udp"
+      - "3478:3478/tcp"
+      - "5349:5349/tcp"
+      - "49152-49201:49152-49201/udp"
+    volumes:
+      - ./coturn/turnserver.conf:/etc/coturn/turnserver.conf:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+    command: ["-c", "/etc/coturn/turnserver.conf", "-v"]
+    networks:
+      - matrix-net
+
+networks:
+  matrix-net:
+    driver: bridge
+
+volumes:
+  postgres-data:

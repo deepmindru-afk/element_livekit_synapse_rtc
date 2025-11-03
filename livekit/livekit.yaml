@@ -1,0 +1,22 @@
+port: 7880
+bind_addresses:
+  - "0.0.0.0"
+
+rtc:
+  tcp_port: 7881
+  port_range_start: 50000
+  port_range_end: 50020
+  use_external_ip: true
+  node_ip: "44.333.222.111"
+
+logging:
+  level: debug
+
+turn:
+  enabled: false
+
+room:
+  auto_create: true
+
+keys:
+  111ea560574baaabbbccc9cf2f4d3111: 11122233359c0d83f836055e267255674e39f9237dd22fcc5ed444f333222111

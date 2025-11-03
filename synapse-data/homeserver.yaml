@@ -1,0 +1,77 @@
+server_name: "mydomain.com"
+public_baseurl: "https://mydomain.com"
+
+listeners:
+  - port: 8008
+    tls: false
+    type: http
+    x_forwarded: true
+    resources:
+      - names: [client, federation]
+        compress: false
+
+  - port: 8448  # ← добавить federation endpoint
+    tls: false
+    type: http
+    x_forwarded: true
+    bind_addresses: ['0.0.0.0']
+    resources:
+      - names: [federation]
+        compress: false
+
+report_stats: false
+
+# Включаем регистрацию для локальной среды. На проде выключите и используйте ручную регистрацию.
+enable_registration: true
+# Замените значением из переменной окружения/секрета в проде
+registration_shared_secret: "please_change_me"
+
+allow_guest_access: false
+
+media_store_path: "/data/media_store"
+enable_registration_without_verification: true
+suppress_key_server_warning: true
+
+experimental_features:
+  # MSC3266: Room summary API. Used for knocking over federation.
+  msc3266_enabled: true
+  # MSC4222: Needed for syncv2 state_after. Allows clients to correctly track room state.
+  msc4222_enabled: true
+  # MSC4140: Delayed events are required for proper call participation signalling.
+  # If disabled, you might get stuck calls in Matrix rooms.
+  msc4140_enabled: true
+
+# The maximum allowed duration by which sent events can be delayed, as per MSC4140.
+max_event_delay_duration: 24h
+
+# Adjust rate limiting for call-related events
+rc_message:
+  # Needs to match at least E2EE key sharing frequency plus headroom.
+  # Key sharing events are bursty.
+  per_second: 0.5
+  burst_count: 30
+
+rc_delayed_event_mgmt:
+  # Needs to match at least the heartbeat frequency (5s = 0.2/s) plus headroom.
+  per_second: 1.0 # Increased from example's 1 to be safer
+  burst_count: 20
+
+# Конфигурация PostgreSQL
+database:
+  name: psycopg2
+  args:
+    user: synapse
+    password: synapse_password
+    database: synapse
+    host: postgres
+    port: 5432
+    cp_min: 5
+    cp_max: 10
+
+# Доверенный ключевой сервер для верификации федерации
+trusted_key_servers:
+  - server_name: "matrix.org"
+
+turn_shared_secret: "strong_password_here_12345"
+turn_user_lifetime: 86400000
+turn_allow_guests: true
