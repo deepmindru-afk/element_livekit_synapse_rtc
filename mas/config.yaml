@@ -109,7 +109,27 @@ clients:
     client_secret: RWiREqVkAXARyhnDVAgXvDHkHlqT1s11
     redirect_uris:
       - https://syn.mydomain.com/_synapse/client/oidc/callback
-#
+
+  #  кастомный клиент
+  - client_id: 021APP557JN2EW7Q3JG3EMF211
+    client_auth_method: none
+    redirect_uris:
+      - https://mas.mydomain.com/oauth/callback
+#      - https://oidcdebugger.com/debug
+
+oauth:
+  scopes:
+    - name: "urn:matrix:org.matrix.msc2967.client:api:*"
+      description: "Matrix Client API access"
+    # Дополнительные scopes (опционально)
+    - name: "urn:matrix:org.matrix.msc2967.client:device:*"
+      description: "Device management"
+
+
+experimental:
+  # Time-to-live of OAuth 2.0 access tokens in seconds. Defaults to 300
+  access_token_ttl: 3600
+
 #passwords:
 #  enabled: true
 #  schemes:
@@ -131,9 +151,7 @@ account:
   registration_token_required: true
 
 login:
-  # Controls how many login attempts are permitted
-  # based on source IP address.
-  # This can protect against brute force login attempts.
+  session_timeout: 3600
   per_ip:
     burst: 3
     per_second: 0.05

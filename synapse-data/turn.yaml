@@ -1,7 +1,7 @@
 turn_uris:
-  - "turn:coturn:3478?transport=udp"
-  - "turn:coturn:3478?transport=tcp"
-  - "turns:coturn:5349?transport=tcp"
+  - "turn:syn.domain.com:3478?transport=udp"
+  - "turn:syn.domain.com:3478?transport=tcp"
+  - "turns:syn.domain.com:5349?transport=tcp"
 
 turn_shared_secret: "strong_password_here_12345"
 turn_user_lifetime: 86400000
