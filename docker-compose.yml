@@ -17,8 +17,8 @@ services:
       - ./certbot/www:/var/www/certbot
       - ./nginx/html:/var/www/html
     restart: unless-stopped
-    networks:
-      - matrix-net
+    #networks:
+    #  - matrix-net
 
 #  certbot:
 #    image: certbot/certbot:latest
@@ -40,8 +40,8 @@ services:
     expose:
       - "8008"
       - "8448"
-    networks:
-      - matrix-net
+    #networks:
+    #  - matrix-net
     depends_on:
       - postgres
     entrypoint: ["sh", "-c", "if [ ! -f /data/homeserver.yaml ]; then /start.py generate; fi; exec /start.py"]
@@ -57,8 +57,8 @@ services:
       - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    networks:
-      - matrix-net
+    #networks:
+    #  - matrix-net
 
   element:
     image: vectorim/element-web:latest
@@ -68,8 +68,8 @@ services:
       - ./element/config.json:/app/config.json
     expose:
       - "80"
-    networks:
-      - matrix-net
+    #networks:
+    #  - matrix-net
     depends_on:
       - synapse
 
@@ -86,8 +86,8 @@ services:
       - LIVEKIT_KEY=111ea560574baaabbbccc9cf2f4d3111
       - LIVEKIT_SECRET=11122233359c0d83f836055e267255674e39f9237dd22fcc5ed444f333222111
       - LIVEKIT_FULL_ACCESS_HOMESERVERS=mydomain.com # server name
-    networks:
-      - matrix-net
+    #networks:
+    #  - matrix-net
 
   livekit:
     image: livekit/livekit-server:latest
@@ -107,8 +107,8 @@ services:
     #  - "7881:7881/tcp"                 # ICE-TCP fallback
     #  - "7881:7881/udp"                 # ← ДОБАВИТЬ UDP
     #  - "50000-50020:50000-50020/udp"  # ← 100 портов вместо 101
-    networks:
-      - matrix-net
+    #networks:
+    #  - matrix-net
 
   coturn:
     image: coturn/coturn:latest
@@ -123,8 +123,8 @@ services:
       - ./coturn/turnserver.conf:/etc/coturn/turnserver.conf:ro
       - ./certbot/conf:/etc/letsencrypt:ro
     command: ["-c", "/etc/coturn/turnserver.conf", "-v"]
-    networks:
-      - matrix-net
+    #networks:
+    #  - matrix-net
 
   synapse-admin:
     image: oci.element.io/element-admin:latest
@@ -132,8 +132,8 @@ services:
     restart: unless-stopped
     environment:
       - SERVER_NAME=syn.mydomain.com
-    networks:
-      - matrix-net
+    #networks:
+    #  - matrix-net
 
   mas:
     image: ghcr.io/element-hq/matrix-authentication-service:latest
@@ -142,12 +142,12 @@ services:
     volumes:
       - ./mas/config.yaml:/config.yaml
     command: ["server", "--config", "/config.yaml"]
-    networks:
-      - matrix-net
+    #networks:
+    #  - matrix-net
 
-networks:
-  matrix-net:
-    driver: bridge
+#networks:
+#  matrix-net:
+#    driver: bridge
 
 volumes:
   postgres-data:
