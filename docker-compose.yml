@@ -110,11 +110,11 @@ services:
     image: coturn/coturn:latest
     container_name: matrix-coturn
     restart: unless-stopped
-    ports:
-      - "3478:3478/udp"
-      - "3478:3478/tcp"
-      - "5349:5349/tcp"
-      - "49152-49181:49152-49181/udp"
+    #ports:
+    #  - "3478:3478/udp"
+    #  - "3478:3478/tcp"
+    #  - "5349:5349/tcp"
+    #  - "49152-49181:49152-49181/udp"
     volumes:
       - ./coturn/turnserver.conf:/etc/coturn/turnserver.conf:ro
       - ./certbot/conf:/etc/letsencrypt:ro
