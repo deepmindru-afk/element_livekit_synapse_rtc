@@ -101,12 +101,12 @@ services:
       - "7880"
       - "7881"
       - "7882"
-    ports:
-      - "7880:7880/tcp"                 # HTTP/WSS signaling
-      - "7880:7880/udp"                 # ← ДОБАВИТЬ UDP для RTP
-      - "7881:7881/tcp"                 # ICE-TCP fallback
-      - "7881:7881/udp"                 # ← ДОБАВИТЬ UDP
-      - "50000-50020:50000-50020/udp"  # ← 100 портов вместо 101
+    #ports:
+    #  - "7880:7880/tcp"                 # HTTP/WSS signaling
+    #  - "7880:7880/udp"                 # ← ДОБАВИТЬ UDP для RTP
+    #  - "7881:7881/tcp"                 # ICE-TCP fallback
+    #  - "7881:7881/udp"                 # ← ДОБАВИТЬ UDP
+    #  - "50000-50020:50000-50020/udp"  # ← 100 портов вместо 101
     networks:
       - matrix-net
 
