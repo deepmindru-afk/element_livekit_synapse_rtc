@@ -13,8 +13,8 @@ services:
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
+    #  - ./certbot/conf:/etc/letsencrypt
+    #  - ./certbot/www:/var/www/certbot
       - ./nginx/html:/var/www/html
     restart: unless-stopped
     #networks:
@@ -58,7 +58,7 @@ services:
       - POSTGRES_PASSWORD=synapse_password
       - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
     volumes:
-      - postgresdata:/var/lib/data
+      - pgdata:/var/lib/data
     #networks:
     #  - matrix-net
 
@@ -152,4 +152,4 @@ services:
 #    driver: bridge
 
 volumes:
-  postgresdata:
+  pgdata:
