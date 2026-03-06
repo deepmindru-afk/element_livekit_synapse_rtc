@@ -90,7 +90,7 @@ secrets:
 # ------------------------------
 
 database:
-  uri: postgresql://synapse:synapse_password@postgres:5432/mas?sslmode=disable
+  uri: postgresql://synapse:synapse_password@postgres:5432/synapse?sslmode=disable
 
 # ------------------------------
 #  Matrix Synapse (делегирование)
