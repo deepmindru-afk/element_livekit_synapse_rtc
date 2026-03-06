@@ -35,6 +35,8 @@ services:
     environment:
       - SYNAPSE_SERVER_NAME=mydomain.com
       - SYNAPSE_REPORT_STATS=no
+      - UID=0
+      - GID=0
     volumes:
       - ./synapse-data:/data
     expose:
