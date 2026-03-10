@@ -58,7 +58,7 @@ services:
       - POSTGRES_PASSWORD=synapse_password
       - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
     volumes:
-      - vpgdata:/var/lib/data
+      - vpgdatav:/var/lib/data
     #networks:
     #  - matrix-net
 
@@ -91,18 +91,18 @@ services:
     #networks:
     #  - matrix-net
 
-  livekit:
-    image: livekit/livekit-server:latest
-    container_name: matrix-livekit
-    restart: unless-stopped
-    command: --config /etc/livekit.yaml
-    volumes:
-      - ./livekit/livekit.yaml:/etc/livekit.yaml
-      - ./certbot/conf:/etc/letsencrypt
-    expose:
-      - "7880"
-      - "7881"
-      - "7882"
+  #livekit:
+  #  image: livekit/livekit-server:latest
+  #  container_name: matrix-livekit
+  #  restart: unless-stopped
+  #  command: --config /etc/livekit.yaml
+  #  volumes:
+  #    - ./livekit/livekit.yaml:/etc/livekit.yaml
+  #    - ./certbot/conf:/etc/letsencrypt
+  #  expose:
+  #    - "7880"
+  #    - "7881"
+  #    - "7882"
     #ports:
     #  - "7880:7880/tcp"                 # HTTP/WSS signaling
     #  - "7880:7880/udp"                 # ← ДОБАВИТЬ UDP для RTP
@@ -152,4 +152,4 @@ services:
 #    driver: bridge
 
 volumes:
-  vpgdata:
+  vpgdatav:
